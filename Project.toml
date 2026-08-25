@@ -1,0 +1,17 @@
+name = "CasADiNative"
+uuid = "30fb3c3e-f728-433f-984c-e53dd5973698"
+authors = ["Joris Gillis <joris@yacoda.com> and the CasADi developers"]
+version = "3.8.0"
+
+[deps]
+CasADiJulia_jll = "b0fd5357-58b1-581c-9750-f6ec0317d5f4"
+
+[compat]
+CasADiJulia_jll = "=3.8.0"
+julia = "1.11, 1.12"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
