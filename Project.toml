@@ -5,10 +5,15 @@ version = "3.8.0"
 
 [deps]
 CasADiJulia_jll = "b0fd5357-58b1-581c-9750-f6ec0317d5f4"
+CasADi_jll = "4e54d0b0-c9f2-5505-b569-bd333cacc8c1"
 
 [compat]
 CasADiJulia_jll = "=3.8.0"
-julia = "1.11, 1.12"
+CasADi_jll = "=3.8.0"
+# CasADiJulia_jll carries a julia_version dimension -- one artifact per Julia
+# minor -- so mirror its julia_compat here. An unsupported minor then fails on
+# this package rather than as an unresolvable JLL.
+julia = "~1.10, ~1.11, ~1.12"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
