@@ -20,8 +20,10 @@ Conventions mirror CasADi's Python/MATLAB API: `ca.MX.sym(...)`, `'` transpose,
 
 ## Status
 
-Beta. This package is the handwritten ergonomics layer and nothing else. The
-binaries and the 600 KB SWIG-generated module come from two JLLs built by
+Beta. This package is a shim: about twenty lines that set the plugin search
+path and splice in the ergonomics layer. Nothing is vendored, so nothing can
+drift from the CasADi release it binds. The binaries, the 600 KB SWIG-generated
+module and the ergonomics layer itself all come from two JLLs built by
 [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil):
 [`CasADi_jll`](https://github.com/JuliaPackaging/Yggdrasil/tree/master/C/CasADi)
 (libcasadi plus the solver/integrator plugins) and
