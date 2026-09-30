@@ -1,8 +1,7 @@
 using CasADiNative
 using Test
 
-# Smoke tests. The exhaustive suite lives in the casadi repo (test/julia/*.jl);
-# port it here as the package matures. These exercise the JLL load + plugin path.
+# Smoke tests of this package's own glue (JLL load, plugin path, BLAS forwarding).
 @testset "CasADiNative" begin
     @testset "symbolics + casadi-faithful constructors" begin
         x = CasADiNative.MX.sym("x", 2)         # static method-style
@@ -33,6 +32,14 @@ using Test
         @test sol["x"] isa DM
     end
 
+    @testset "ipopt (LP64 BLAS forwarding)" begin
+        x = SX.sym("x"); y = SX.sym("y")
+        nlp = Dict("x" => vertcat(x, y), "f" => (1 - x)^2 + 100 * (y - x^2)^2)
+        S = nlpsol("S", "ipopt", nlp, Dict{String,Any}("print_time" => false,
+            "ipopt" => Dict{String,Any}("print_level" => 0)))
+        @test Vector{Float64}(S(x0 = [0.0, 0.0])["x"]) ≈ [1.0, 1.0] atol = 1e-6
+    end
+
     @testset "printing" begin
         x = SX.sym("x")
         f = CasADiNative.Function("f", [x], [x^2 + 1])
@@ -43,3 +50,4 @@ using Test
         @test isempty(Test.detect_ambiguities(CasADiNative; recursive = false))
     end
 end
+

@@ -2,8 +2,14 @@ module CasADiNative
 
 using CasADi_jll
 using CasADiSWIG_jll
+import LinearAlgebra
+import OpenBLAS32_jll
 
 function __init__()
+    # Ipopt_jll needs LP64 BLAS behind libblastrampoline (same as Ipopt.jl).
+    if !Base.any(lib -> lib.interface == :lp64, LinearAlgebra.BLAS.lbt_get_config().loaded_libs)
+        LinearAlgebra.BLAS.lbt_forward(OpenBLAS32_jll.libopenblas_path)
+    end
     # casadi finds its plugins via CASADI_PLUGIN_SEARCH_PATH; prepend the JLL's lib dir.
     libdir = dirname(CasADi_jll.libcasadi_path)
     sep = Sys.iswindows() ? ';' : ':'
