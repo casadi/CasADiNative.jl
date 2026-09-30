@@ -24,3 +24,13 @@ jobs:
       - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
+  casadi-sync:
+    name: test/casadi matches the casadi release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+      - run: julia test/sync_casadi.jl
+      - run: git status --porcelain test/casadi && test -z "$(git status --porcelain test/casadi)"
