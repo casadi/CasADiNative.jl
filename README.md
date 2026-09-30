@@ -27,13 +27,13 @@ module and the ergonomics layer itself all come from two JLLs built by
 [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil):
 [`CasADi_jll`](https://github.com/JuliaPackaging/Yggdrasil/tree/master/C/CasADi)
 (libcasadi plus the solver/integrator plugins) and
-[`CasADiJulia_jll`](https://github.com/JuliaPackaging/Yggdrasil/tree/master/C/CasADiJulia)
+[`CasADiSWIG_jll`](https://github.com/JuliaPackaging/Yggdrasil/tree/master/C/CasADiSWIG)
 (the wrapper `libcasadi_wrap` next to the generated `casadi.jl`).
 
 The package version tracks the CasADi release it binds.
 
 Because the wrapper inlines Julia C API accessors tied to the minor ABI, it is
-compiled once per Julia minor, and `CasADiJulia_jll` therefore exists only for
+compiled once per Julia minor, and `CasADiSWIG_jll` therefore exists only for
 Julia 1.10, 1.11 and 1.12.
 
 ## License

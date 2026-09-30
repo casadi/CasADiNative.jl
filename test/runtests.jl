@@ -16,7 +16,8 @@ using Test
 
     @testset "Function eval" begin
         a = SX.sym("a"); b = SX.sym("b")
-        f = Function("f", [a, b], [a + b, a * b], ["a", "b"], ["s", "p"])
+        # Qualified: bare `Function` is Base.Function.
+        f = CasADiNative.Function("f", [a, b], [a + b, a * b], ["a", "b"], ["s", "p"])
         r = f(2.0, 3.0)
         @test Float64(r[1]) == 5.0
         @test Float64(r[2]) == 6.0
@@ -25,7 +26,8 @@ using Test
     @testset "nlpsol (native sqpmethod plugin)" begin
         x = MX.sym("x"); y = MX.sym("y")
         nlp = Dict("x" => vertcat(x, y), "f" => (x - 1)^2 + (y - 2)^2, "g" => x + y)
-        solver = nlpsol("s", "sqpmethod", nlp)
+        # qpoases (sqpmethod's default QP solver) is not in the JLL.
+        solver = nlpsol("s", "sqpmethod", nlp, Dict("qpsol" => "qrqp"))
         sol = solver(x0 = [0.0, 0.0], lbg = -Inf, ubg = Inf)
         v = value  # ensure symbol is exported
         @test sol["x"] isa DM
@@ -33,7 +35,7 @@ using Test
 
     @testset "printing" begin
         x = SX.sym("x")
-        f = Function("f", [x], [x^2 + 1])
+        f = CasADiNative.Function("f", [x], [x^2 + 1])
         @test string(f(3.0)) == "10"
     end
 
