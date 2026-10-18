@@ -36,7 +36,9 @@ release's own Julia tests and examples, unmodified; refresh it with
 
 Because the wrapper inlines Julia C API accessors tied to the minor ABI, it is
 compiled once per Julia minor, and `CasADiSWIG_jll` therefore exists only for
-Julia 1.10, 1.11 and 1.12.
+Julia 1.10 through 1.13.
+
+Linux and macOS only for now; Windows is not supported yet.
 
 ## License
 

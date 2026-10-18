@@ -1,5 +1,8 @@
 module CasADiNative
 
+# The Windows CasADiSWIG_jll build lacks the wrapper's exports.
+Sys.iswindows() && error("CasADiNative does not support Windows yet")
+
 using CasADi_jll
 using CasADiSWIG_jll
 import LinearAlgebra
