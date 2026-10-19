@@ -21,6 +21,19 @@ function __init__()
 end
 
 # Ergonomics layer, shipped as a module body beside the generated casadi.jl.
-include(CasADiSWIG_jll.casadi_native_body)
+# Temporary: the CasADiSWIG_jll 3.8.1+0 body shadows LinearAlgebra's dot/cross; drop them and extend.
+import LinearAlgebra: dot, cross
+const _OLD_BODY = !occursin("import LinearAlgebra: dot, cross", read(CasADiSWIG_jll.casadi_native_body, String))
+_nodotcross(ex) = Meta.isexpr(ex, :function) && Meta.isexpr(ex.args[1], :call) && ex.args[1].args[1] == :dot ? nothing :
+    ex isa Expr ? Expr(ex.head, (_nodotcross(a) for a in ex.args if a != QuoteNode(:cross))...) : ex
+include(_OLD_BODY ? _nodotcross : identity, CasADiSWIG_jll.casadi_native_body)
+if _OLD_BODY
+    function dot(a::_Cat, b::Union{_Cat,Real})
+        T = _catpromote((a, b))
+        _restore(T, C.dot(_ascat(T, a), _ascat(T, b)))
+    end
+    dot(a::Real, b::_Cat) = dot(b, a)
+    cross(a::T, b::T, dim::Integer...) where {T<:_Cat} = C.cross(a, b, dim...)
+end
 
 end # module CasADiNative
