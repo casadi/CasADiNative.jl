@@ -1,5 +1,6 @@
 using CasADiNative
 using Test
+import LinearAlgebra
 
 # Smoke tests of this package's own glue (JLL load, plugin path, BLAS forwarding).
 @testset "CasADiNative" begin
@@ -46,6 +47,11 @@ using Test
         @test string(f(3.0)) == "10"
     end
 
+    @testset "dot/cross extend LinearAlgebra" begin
+        @test CasADiNative.dot === LinearAlgebra.dot
+        @test CasADiNative.cross === LinearAlgebra.cross
+    end
+
     @testset "no method ambiguities" begin
         @test isempty(Test.detect_ambiguities(CasADiNative; recursive = false))
     end
@@ -59,7 +65,9 @@ ENV["CASADI_JL"] = STUB
 
 @testset "casadi test/julia" begin
     m = Module(:CasadiTests)
-    Core.eval(m, :(include(p) = Base.include($m, p)))
+    # ipqp in CasADi 3.8.1 overflows a buffer on constrained QPs (fixed upstream).
+    noipqp(ex) = ex isa Expr ? Expr(ex.head, (noipqp(a) for a in ex.args if ex.head != :vect || a != "ipqp")...) : ex
+    Core.eval(m, :(include(p) = Base.include(basename(p) == "conic.jl" ? $noipqp : identity, $m, p)))
     Base.include(m, joinpath(CASADI, "test", "julia", "runtests.jl"))
 end
 

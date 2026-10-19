@@ -1,7 +1,7 @@
 name = "CasADiNative"
 uuid = "30fb3c3e-f728-433f-984c-e53dd5973698"
 authors = ["Joris Gillis <joris@yacoda.com> and the CasADi developers"]
-version = "3.8.1"
+version = "0.1.0"
 
 [deps]
 CasADiSWIG_jll = "0478ce59-e586-55af-83e7-894d8531a7d3"

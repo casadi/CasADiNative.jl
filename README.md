@@ -1,6 +1,6 @@
 # CasADiNative.jl
 
-Native Julia bindings for [CasADi](https://casadi.org), without a Python bridge.
+Native Julia bindings for [CasADi](https://web.casadi.org), without a Python bridge.
 
 ```julia
 import CasADiNative as ca
@@ -30,8 +30,8 @@ module and the ergonomics layer itself all come from two JLLs built by
 [`CasADiSWIG_jll`](https://github.com/JuliaPackaging/Yggdrasil/tree/master/C/CasADiSWIG)
 (the wrapper `libcasadi_wrap` next to the generated `casadi.jl`).
 
-The package version tracks the CasADi release it binds. `test/casadi` holds that
-release's own Julia tests and examples, unmodified; refresh it with
+Version 0.1.0 binds CasADi 3.8.1 (pinned exactly in `[compat]`). `test/casadi`
+holds that release's own Julia tests and examples, unmodified; refresh it with
 `julia test/sync_casadi.jl` (CI checks it matches).
 
 Because the wrapper inlines Julia C API accessors tied to the minor ABI, it is
