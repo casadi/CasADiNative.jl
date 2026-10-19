@@ -1,11 +1,11 @@
 # Refresh test/casadi from casadi: `julia test/sync_casadi.jl [tag | local checkout]`.
-# Defaults to the casadi tag equal to this package's version.
+# Defaults to the casadi tag pinned by the CasADi_jll compat.
 using TOML
 
 const SUBDIRS = ["test/julia", "docs/examples/julia"]
 const DEST = joinpath(@__DIR__, "casadi")
 
-src = get(ARGS, 1, TOML.parsefile(joinpath(@__DIR__, "..", "Project.toml"))["version"])
+src = get(ARGS, 1, lstrip(TOML.parsefile(joinpath(@__DIR__, "..", "Project.toml"))["compat"]["CasADi_jll"], '='))
 if isdir(src)
     root = src
     label = "local $(readchomp(`git -C $root rev-parse HEAD`))"
