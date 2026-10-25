@@ -20,19 +20,21 @@ Conventions mirror CasADi's Python/MATLAB API: `ca.MX.sym(...)`, `'` transpose,
 
 ## Status
 
-Beta. This package is a shim: about twenty lines that set the plugin search
-path and splice in the ergonomics layer. Nothing is vendored, so nothing can
-drift from the CasADi release it binds. The binaries, the 600 KB SWIG-generated
-module and the ergonomics layer itself all come from two JLLs built by
-[Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil):
+Beta. This package is a shim: its `src/` is the front matter casadi maintains in
+`swig/julia/package` (`bindings.jl` locates the JLL binaries; `__init__` sets the
+plugin search path and LP64 BLAS) and splices in the ergonomics layer. The
+binaries, the 600 KB SWIG-generated module and the ergonomics layer itself all
+come from two JLLs built by [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil):
 [`CasADi_jll`](https://github.com/JuliaPackaging/Yggdrasil/tree/master/C/CasADi)
 (libcasadi plus the solver/integrator plugins) and
 [`CasADiSWIG_jll`](https://github.com/JuliaPackaging/Yggdrasil/tree/master/C/CasADiSWIG)
 (the wrapper `libcasadi_wrap` next to the generated `casadi.jl`).
 
-Version 0.1.0 binds CasADi 3.8.1 (pinned exactly in `[compat]`). `test/casadi`
-holds that release's own Julia tests and examples, unmodified; refresh it with
-`julia test/sync_casadi.jl` (CI checks it matches).
+Version 0.2.0 binds CasADi 3.8.2 (pinned exactly in `[compat]`). `src/` and
+`test/casadi` are unmodified copies from that casadi release (`test/casadi` holds
+its Julia tests, the package's own tests and the examples; `test/runtests.jl` runs
+casadi's `test/julia/package/runtests.jl`). Refresh both with
+`julia test/sync_casadi.jl` (CI checks they match); never edit them here.
 
 Because the wrapper inlines Julia C API accessors tied to the minor ABI, it is
 compiled once per Julia minor, and `CasADiSWIG_jll` therefore exists only for
