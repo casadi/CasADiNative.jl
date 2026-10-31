@@ -31,16 +31,17 @@ come from two JLLs built by [Yggdrasil](https://github.com/JuliaPackaging/Yggdra
 (the wrapper `libcasadi_wrap` next to the generated `casadi.jl`).
 
 Version 0.2.0 binds CasADi 3.8.2 (pinned exactly in `[compat]`). `src/` and
-`test/casadi` are unmodified copies from that casadi release (`test/casadi` holds
+`test/casadi` are copies from that casadi release (`test/casadi` holds
 its Julia tests, the package's own tests and the examples; `test/runtests.jl` runs
 casadi's `test/julia/package/runtests.jl`). Refresh both with
-`julia test/sync_casadi.jl` (CI checks they match); never edit them here.
+`julia test/sync_casadi.jl` (CI checks they match); never edit them here. Fixes that
+cannot wait for a casadi release go in `test/patches`, which the sync applies on top.
 
 Because the wrapper inlines Julia C API accessors tied to the minor ABI, it is
 compiled once per Julia minor, and `CasADiSWIG_jll` therefore exists only for
 Julia 1.10 through 1.13.
 
-Linux and macOS only for now; Windows is not supported yet.
+Runs on Linux, macOS and Windows.
 
 ## License
 

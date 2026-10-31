@@ -29,5 +29,9 @@ for (d, dest) in DIRS
         cp(joinpath(root, f), joinpath(dest, relpath(f, d)))
     end
 end
+# local fixes on top of the release (test/patches/*.patch, applied in order)
+for p in sort(filter(endswith(".patch"), readdir(joinpath(@__DIR__, "patches"); join = true)))
+    run(`git -C $(joinpath(@__DIR__, "..")) apply $p`)
+end
 write(joinpath(@__DIR__, "casadi", "SOURCE"), label * "\n")
 println("synced src and test/casadi from ", label)
