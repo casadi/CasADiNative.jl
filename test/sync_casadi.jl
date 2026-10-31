@@ -1,9 +1,14 @@
-# Refresh test/casadi from casadi: `julia test/sync_casadi.jl [tag | local checkout]`.
-# Defaults to the casadi tag pinned by the CasADi_jll compat.
+# Refresh the casadi-owned files from casadi: `julia test/sync_casadi.jl [tag | local checkout]`.
+# Defaults to the casadi tag pinned by the CasADi_jll compat. src/ is the package front matter
+# (casadi swig/julia/package); test/casadi holds casadi's Julia tests, package tests and examples.
 using TOML
 
-const SUBDIRS = ["test/julia", "docs/examples/julia"]
-const DEST = joinpath(@__DIR__, "casadi")
+# casadi dir => destination in this repo
+const DIRS = [
+    "swig/julia/package" => joinpath(@__DIR__, "..", "src"),
+    "test/julia" => joinpath(@__DIR__, "casadi", "test", "julia"),
+    "docs/examples/julia" => joinpath(@__DIR__, "casadi", "docs", "examples", "julia"),
+]
 
 src = get(ARGS, 1, lstrip(TOML.parsefile(joinpath(@__DIR__, "..", "Project.toml"))["compat"]["CasADi_jll"], '='))
 if isdir(src)
@@ -12,14 +17,21 @@ if isdir(src)
 else
     root = mktempdir()
     run(`git -c advice.detachedHead=false clone --quiet --depth 1 --branch $src --filter=blob:none --sparse https://github.com/casadi/casadi $root`)
-    run(`git -C $root sparse-checkout set $SUBDIRS`)
+    run(`git -C $root sparse-checkout set $(first.(DIRS))`)
     label = "casadi/casadi $src $(readchomp(`git -C $root rev-parse HEAD`))"
 end
 
-rm(DEST; force = true, recursive = true)
-for d in SUBDIRS
-    mkpath(dirname(joinpath(DEST, d)))
-    cp(joinpath(root, d), joinpath(DEST, d))
+rm(joinpath(@__DIR__, "casadi"); force = true, recursive = true)
+for (d, dest) in DIRS
+    rm(dest; force = true, recursive = true)
+    for f in readlines(`git -C $root ls-files -- $d`)  # tracked files only
+        mkpath(dirname(joinpath(dest, relpath(f, d))))
+        cp(joinpath(root, f), joinpath(dest, relpath(f, d)))
+    end
 end
-write(joinpath(DEST, "SOURCE"), label * "\n")
-println("synced test/casadi from ", label)
+# local fixes on top of the release (test/patches/*.patch, applied in order)
+for p in sort(filter(endswith(".patch"), readdir(joinpath(@__DIR__, "patches"); join = true)))
+    run(`git -C $(joinpath(@__DIR__, "..")) apply $p`)
+end
+write(joinpath(@__DIR__, "casadi", "SOURCE"), label * "\n")
+println("synced src and test/casadi from ", label)

@@ -1,0 +1,12 @@
+Drop the Windows error: CasADiSWIG_jll 3.8.2 exports the wrapper on Windows.
+diff --git a/src/bindings.jl b/src/bindings.jl
+index 70c4eaa..57fc1bf 100644
+--- a/src/bindings.jl
++++ b/src/bindings.jl
+@@ -1,6 +1,4 @@
+ # Binary locations of the registered package: the JLLs (casadi CI substitutes its build tree).
+-# The Windows CasADiSWIG_jll build lacks the wrapper's exports.
+-Sys.iswindows() && error("CasADiNative does not support Windows yet")
+ using CasADi_jll
+ using CasADiSWIG_jll
+ _plugin_dir() = dirname(CasADi_jll.libcasadi_path)
